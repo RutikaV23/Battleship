@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battleship</title>
+</head>
+<style>
+    body {
+        background-color:beige;
+    }
+    h1 {
+        text-decoration: underline;
+        text-decoration-color: lightcoral;
+        text-align: center;
+        margin: 0;
+    }
+    h4, ol {
+        text-align: center;
+        color:black;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(4, 100px);
+        grid-template-rows: repeat(4, 100px);
+        border: 2px solid snow;
+        width: fit-content;
+        justify-content: center;
+        margin: 5% auto;
+    }
+    .grid-item {
+        display: flex; 
+        justify-content: center;
+        align-items: center;
+        border: 2px solid snow;
+        cursor: pointer;
+        background-color:burlywood;
+    }
+    .button-container {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+    }
+    button {
+        padding: 10px 20px;
+        margin: 0 0px;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        background-color: lightcoral;
+        color: white;
+        font-size: 20px;
+    }
+    button:hover {
+        background-color:cadetblue;
+    }
+    img {
+        width: 80px;
+        height: 80px;
+        display: none;
+    }
+    img.revealed {
+        display: block;
+    }
+</style>
+<body>
+    <h1>Battleship</h1>
+    <h4>Game Rule</h4>
+    <ol>
+        <li>Click on the cells to reveal the image hidden behind them.</li>
+        <li>There are 5 ships hidden in the game.</li>
+        <li>You win if you can find all ships in less than 10 clicks, else you lose.</li>
+    </ol>
+    
+        <div class="grid-container">
+            <!-- 16 grid items -->
+            <div class="grid-item">1</div>
+            <div class="grid-item">2</div>
+            <div class="grid-item">3</div>
+            <div class="grid-item">4</div>
+            <div class="grid-item">5</div>
+            <div class="grid-item">6</div>
+            <div class="grid-item">7</div>
+            <div class="grid-item">8</div>
+            <div class="grid-item">9</div>
+            <div class="grid-item">10</div>
+            <div class="grid-item">11</div>
+            <div class="grid-item">12</div>
+            <div class="grid-item">13</div>
+            <div class="grid-item">14</div>
+            <div class="grid-item">15</div>
+            <div class="grid-item">16</div>
+        </div>
+    </div>
+    <div class="button-container">
+        <button class="reset">Reset</button>
+    </div>
+
+    <script>
+        const gridContainer = document.querySelector(".grid-container");
+        const resetButton = document.querySelector(".reset");
+
+        const gridSize = 16; // 4x4 grid
+        const shipCount = 5;
+        let attempts = 0;
+        let shipsFound = 0;
+        let shipPositions = [];
+
+        // Initialize the game
+        function initializeGame() {
+            gridContainer.innerHTML = "";
+            attempts = 0;
+            shipsFound = 0;
+            shipPositions = generateShipPositions();
+
+            for (let i = 0; i < gridSize; i++) {
+                const gridItem = document.createElement("div");
+                gridItem.classList.add("grid-item");
+
+                const img = document.createElement("img");
+                img.src = shipPositions.includes(i) ? "ship.png" : "sea.webp";
+                img.alt = shipPositions.includes(i) ? "Ship" : "Sea";
+
+                gridItem.appendChild(img);
+
+                gridItem.addEventListener("click", () => handleCellClick(gridItem, img));
+
+                gridContainer.appendChild(gridItem);
+            }
+        }
+
+        // Generate random ship positions
+        function generateShipPositions() {
+            const positions = [];
+            while (positions.length < shipCount) {
+                const position = Math.floor(Math.random() * gridSize);
+                if (!positions.includes(position)) {
+                    positions.push(position);
+                }
+            }
+            return positions;
+        }
+
+        // Handle cell click
+        function handleCellClick(cell, img) {
+            if (cell.classList.contains("revealed")) return;
+
+            cell.classList.add("revealed");
+            img.classList.add("revealed");
+
+            attempts++;
+
+            if (img.alt === "Ship") {
+                shipsFound++;
+            }
+
+            checkGameStatus();
+        }
+
+        // Check game status
+        function checkGameStatus() {
+            if (shipsFound === shipCount) {
+                setTimeout(() => alert("You Won!"), 100);
+            } else if (attempts >= 10) {
+                setTimeout(() => alert("You Lost!"), 100);
+            }
+        }
+
+        // Reset the game
+        resetButton.addEventListener("click", initializeGame);
+
+        // Start the game
+        initializeGame();
+    </script>
+</body>
+</html>
